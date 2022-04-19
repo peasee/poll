@@ -7,7 +7,7 @@ const express = require("express");
 const route = express.Router();
 
 /**
- * POST /poll/:pollID/vote
+ * POST /api/poll/:pollID/vote
  * 
  * Submits a vote for the specified option ID in the body to the specified poll by ID
  * Does not perform a check if the specified option exists - 
@@ -15,7 +15,7 @@ const route = express.Router();
  * 
  * @error Returns a 403 if the user at the specified IP has already voted on this poll
  */
-route.post("/poll/:pollID/vote", async (req, res)=>{
+route.post("/api/poll/:pollID/vote", async (req, res)=>{
     if(await IPVoted.hasVoted(req.params.pollID, req.headers["cf-from"] || req.socket.remoteAddress) !== false) return res.status(403).json({error: "You've already voted on this poll!"});
 
     await Promise.all([

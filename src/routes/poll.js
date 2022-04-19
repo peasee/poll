@@ -6,7 +6,7 @@ const express = require("express");
 const route = express.Router();
 
 /**
- * GET /poll/:pollID
+ * GET /api/poll/:pollID
  * 
  * Returns an object for the poll at the specified ID
  * Payload format takes the format of {"title", "optionCount", "n..optionCount:prompt", "n..optionCount:count"}
@@ -16,14 +16,14 @@ const route = express.Router();
  * 
  * @error Returns 404 if the poll with the specified ID doesn't exist
  */
-route.get("/poll/:pollID", async (req, res)=>{
+route.get("/api/poll/:pollID", async (req, res)=>{
     if(await Poll.exists(req.params.pollID) !== true) return res.status(404).json({error: "Not found"});
 
     return res.json(await Poll.get(req.params.pollID));
 });
 
 /**
- * GET /poll/:pollID/options
+ * GET /api/poll/:pollID/options
  * 
  * A minimal endpoint, returning the current vote count for each option
  * Payload format takes the format of {"n..optionCount"}, with the value of each property identifying the count for that option
@@ -32,7 +32,7 @@ route.get("/poll/:pollID", async (req, res)=>{
  * 
  * @error Returns 404 if the poll with the specified ID doesn't exist
  */
-route.get("/poll/:pollID/options", async (req, res)=>{
+route.get("/api/poll/:pollID/options", async (req, res)=>{
     if(await Poll.exists(req.params.pollID) !== true) return res.status(404).json({error: "Not found"});
 
     const poll = await Poll.get(req.params.pollID);
