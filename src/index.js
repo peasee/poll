@@ -1,14 +1,14 @@
 "use strict";
 
-const bodyParser = require("body-parser");
-const morgan = require("morgan");
-const express = require("express");
-const app = express();
+const config = require("../config.json");
 
-// app.use(morgan("dev"));
-app.use(bodyParser.json());
+const cluster = require("cluster");
+const server = require("./server");
 
-app.use(require("./routes/poll.js"));
-app.use(require("./routes/vote.js"));
-
-app.listen(8081, ()=>console.log("Poller listening on", 8081));
+if(cluster.isMaster) {
+    for(let i=0; i<config.threads; i++) {
+        cluster.fork();
+    }
+} else {
+    server(config.port);
+}
