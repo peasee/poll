@@ -1,0 +1,28 @@
+* text eol=lf
+
+# Archives
+*.7z -text
+*.br -text
+*.gz -text
+*.tar -text
+*.zip -text
+
+# Documents
+*.pdf -text
+
+# Images
+*.gif -text
+*.ico -text
+*.jpg -text
+*.pdf -text
+*.png -text
+*.psd -text
+*.webp -text
+
+# Fonts
+*.woff2 -text
+*.ttf -text
+*.otf -text
+
+# Other
+*.exe -text 
