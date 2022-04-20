@@ -16,6 +16,12 @@ Some other considerations for performance have been made with this implementatio
 - Not performing sanity checks for an option ID when a client is voting. The only time an option would be voted for that doesn't exist is by an attacker using an automated method. End users will never see these "phantom" votes, so there's little use in wasting CPU cycles sanity checking them.
 - Utilising a random wait in the React client when performing web requests, in an attempt to balance peaky loads from the client side. The client performs a random wait between 100-1500ms before performing the web request, on each web request.
 
+# But why not AWS?
+
+"Oh, you want scaling performance? Why didn't you just make this in AWS?"
+
+I'm not rich. That's all. Making this kind of application scale using something like DynamoDB/SQS/Lambda/API Gateway at a high load rate of 15 million votes per month (about 100 polls per day with 5000 votes) has a comparative cost of about $200 USD per month. Sure, it'll scale to essentially infinity loads, but this is only an averaged rate of about 350 requests / second, maybe peaking at the creation of polls around 1-2k requests / second. A $40 USD per month VPS will give you 3-4x this capacity, at a fifth of the cost.
+
 # Installation
 
 Installing the poller service is simple. Requirements are:
