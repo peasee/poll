@@ -46,13 +46,13 @@ route.get("/api/poll/:pollID/options", async (req, res)=>{
 });
 
 /**
- * POST /poll
+ * POST /api/poll
  * 
  * Creates a new poll, and returns the ID of the newly created poll
  * 
  * @error Returns 422 if the submitted body is invalid (missing options or title)
  */
-route.post("/poll", async (req, res)=>{
+route.post("/api/poll", async (req, res)=>{
     // TODO: confirm body for creating a poll
 
     const pollID = await Poll.create(req.body);
