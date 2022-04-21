@@ -30,6 +30,7 @@ export async function get(route) {
         const request = await axios.get(apiPath(route), {timeout: 7500, validateStatus: ()=>true});
 
         if(request.data.error) throw new Error(request.data.error);
+        else if (request.status > 399) throw new Error(`Request failed with code ${request.status}`);
         else return request.data;
     } catch (err) {
         console.error(err);
@@ -44,6 +45,7 @@ export async function post(route, body) {
         const request = await axios.post(apiPath(route), body, {timeout: 7500, validateStatus: ()=>true});
 
         if(request.data.error) throw new Error(request.data.error);
+        else if (request.status > 399) throw new Error(`Request failed with code ${request.status}`);
         else return request.data;
     } catch (err) {
         console.error(err);
