@@ -35,6 +35,10 @@ http {{
     gzip on;
 }}
 
+limit_req_zone $binary_remote_addr zone=pollBaseRoute:10m rate=12r/m;
+limit_req_zone $binary_remote_addr zone=pollPartialData:10m rate=20r/m;
+limit_req_zone $binary_remote_addr zone=pollVote:10m rate=10r/m;
+
 server {{
     listen 443 ssl http2;
     server_name {1};
@@ -44,17 +48,53 @@ server {{
 
     add_header Strict-Transport-Security "max-age=15552000; includeSubDomains" always;
 
-    location / {{
-      client_max_body_size 1M;
-      proxy_pass http://127.0.0.1:{4};
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header Host $http_host;
-      proxy_set_header X-Forwarded-Host $http_host;
-      proxy_set_header X-Forwarded-Proto $scheme;
-      proxy_max_temp_file_size 0;
-      proxy_redirect off;
-      proxy_read_timeout 120;
+    location ^~ /api/poll/\w*/vote$ {{
+        limit_req zone=pollVote
+
+        client_max_body_size 1M;
+        proxy_pass http://127.0.0.1:{4};
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_max_temp_file_size 0;
+        proxy_redirect off;
+        proxy_read_timeout 120;
+    }}
+
+    location ^~ /api/poll/\w*/options$ {{
+        limit_req zone=pollPartialData
+
+        client_max_body_size 1M;
+        proxy_pass http://127.0.0.1:{4};
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_max_temp_file_size 0;
+        proxy_redirect off;
+        proxy_read_timeout 120;
+    }}
+
+    location ^~ /api/poll/\w*$ {{
+        limit_req zone=pollBaseRoute
+
+        client_max_body_size 1M;
+        proxy_pass http://127.0.0.1:{4};
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_max_temp_file_size 0;
+        proxy_redirect off;
+        proxy_read_timeout 120;
+    }}
+
+    location /static {{
+        root /opt/poller/public
     }}
 }}
 """
@@ -64,6 +104,7 @@ parser.add_argument("--domain", required=True, help="The hosted domain for your 
 parser.add_argument("--private_key", help="The private key file location for SSL")
 parser.add_argument("--cert", help="The certificate file location for SSL")
 parser.add_argument("--port", help="The local port to proxy for the poller service")
+parser.add_argument("--directory", help="Your installed application directory")
 
 args = parser.parse_args()
 with open("./config.json") as config_file:
@@ -71,6 +112,9 @@ with open("./config.json") as config_file:
 
 if args.port is None:
     args.port = config["port"]
+
+if args.directory is None:
+    args.directory = "/opt/poller"
 
 if args.private_key is None:
     args.private_key = "/etc/nginx/keys/{}.key".format(args.domain)

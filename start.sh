@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /home/nauvoo/poll
+cd /opt/poller
 npm start

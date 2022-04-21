@@ -3,7 +3,7 @@ Description=Your awesome polling service
 After=syslog.target network.target
 
 [Service]
-ExecStart=sh /home/nauvoo/poll/start.sh
+ExecStart=sh /opt/poller/start.sh
 
 [Install]
 WantedBy=multi-user.target

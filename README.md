@@ -28,6 +28,9 @@ I'm not rich. That's all. Making this kind of application scale using something 
 
 # Installation
 
+You can run the included easy-install script like `sudo install.sh` to install the application into `/opt/poller` and install all requirements.
+If you don't want to use the easy-install script, read on!
+
 Installing the poller service is simple. Requirements are:
 - A Redis server
 - NodeJS 14 LTS or higher

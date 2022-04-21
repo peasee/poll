@@ -13,9 +13,6 @@ const verifyCaptcha = require("../functions/verifyCaptcha");
  * Returns an object for the poll at the specified ID
  * Payload format takes the format of {"title", "optionCount", "n..optionCount:prompt", "n..optionCount:count"}
  * 
- * TODO: Add throttling to this endpoint for a very restrictive once per minute
- *      Clients can hit the options endpoint to retrieve count updates for options, minimising response traffic. This can be done in nginx.
- * 
  * @error Returns 404 if the poll with the specified ID doesn't exist
  */
 route.get("/api/poll/:pollID", async (req, res)=>{
@@ -29,8 +26,6 @@ route.get("/api/poll/:pollID", async (req, res)=>{
  * 
  * A minimal endpoint, returning the current vote count for each option
  * Payload format takes the format of {"n..optionCount"}, with the value of each property identifying the count for that option
- * 
- * TODO: Add throttling to this endpoint for once every 5 seconds - this can actually be done in nginx
  * 
  * @error Returns 404 if the poll with the specified ID doesn't exist
  */
