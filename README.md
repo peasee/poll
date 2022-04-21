@@ -77,11 +77,9 @@ Donations are always appreciated to support the running of the publically availa
 Donations are only supported in the following cryptocurrencies:
 
 
-
-ETH: 0x19005D14F8f0E69A9F3A474bB892B6C5844C1A63
-
-XMR: 42cACZ56C9dcd58Jd7winAQ1PJcoypSgsdhGcfgD2ZBiTL5kpWWv7YT2UoNjjxmor9TnRuQRx9jXmev7dmFqawtSNsncwSs
-
-RVN: RWGyhvVCYq7f7ZCersewpa8SAxEeFEKwRH
-
-ADA: 0x19005D14F8f0E69A9F3A474bB892B6C5844C1A63
+| Currency | Address |
+| - | - |
+| ETH | 0x19005D14F8f0E69A9F3A474bB892B6C5844C1A63 |
+| XMR | 42cACZ56C9dcd58Jd7winAQ1PJcoypSgsdhGcfgD2ZBiTL5kpWWv7YT2UoNjjxmor9TnRuQRx9jXmev7dmFqawtSNsncwSs |
+| RVN | RWGyhvVCYq7f7ZCersewpa8SAxEeFEKwRH |
+| ADA | 0x19005D14F8f0E69A9F3A474bB892B6C5844C1A63 |
