@@ -38,7 +38,7 @@ export function Homepage(props) {
                         You can also raise issues on the repo if you encounter any bugs.
                     </p>
                     <p>
-                        The publically provided instance does not run any advertisements nor analytics - the only thing you load is the tool.
+                        The publically provided instance does not run any advertisements nor analytics (excluding ReCaptcha) - the only thing you load is the tool.
                         Donations are appreciated to support the running of this instance, but are not required! <a href="#">View the details on the repo</a> for how to donate, if you're so inclined.
                     </p>
                 </Col>

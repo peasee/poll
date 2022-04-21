@@ -13,11 +13,12 @@ export function ViewPollOption(props) {
     async function vote(e) {
         e.preventDefault();
 
-        const voteResult = await request.post(`/poll/${props.pollID}/vote`, {option: props.optionID});
+        const recap = await request.captcha("vote");
+        const voteResult = await request.post(`/poll/${props.pollID}/vote`, {option: props.optionID, recap});
 
         if(voteResult.error) {
             props.showError(voteResult.error);
-            console.error(newPoll.error);
+            console.error(voteResult.error);
             return;
         }
 

@@ -54,8 +54,10 @@ export function CreatePollForm(props) {
     async function createPoll(e) {
         e.preventDefault();
 
-        const body = {title, options};
+        const recap = await request.captcha("create");
+        const body = {title, options, recap};
         body.options = body.options.filter(o=>o!=="");
+
         const newPoll = await request.post("/poll", body);
 
         if(newPoll.error) {

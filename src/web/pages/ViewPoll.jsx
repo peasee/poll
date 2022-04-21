@@ -72,7 +72,6 @@ export function ViewPoll(props) {
     async function updateOptionCount() {
         try {
             const data = await request.get(`/poll/${pollID}/options`);
-            console.log(data);
             if(data.error) {
                 props.showError(data.error);
                 setIntervalID(id=>{

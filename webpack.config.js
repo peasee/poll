@@ -1,5 +1,6 @@
 "use strict";
 
+const config = require("./config.json");
 const webpack = require("webpack");
 
 module.exports = {
@@ -34,7 +35,8 @@ module.exports = {
     devtool: "inline-source-map",
     plugins: [
       new webpack.DefinePlugin({
-        "API_HOST": `"${process.env["API_HOST"] ?? "http://localhost:8081"}"`
+        "API_HOST": `"${process.env["API_HOST"] ?? "http://localhost:8081"}"`,
+        "RECAP_SITE_KEY": `"${config.recapSiteKey}"`
       })
     ]
   };

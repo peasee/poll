@@ -56,6 +56,20 @@ If you want to setup a systemd service for your application server, edit the inc
 
 Your new polling service should now be running!
 
+# Config Format
+
+The config file needs to be formatted like the following example:
+
+```
+{
+    "threads": 2,
+    "port": 8081,
+    "host": "e.g. localhost",
+    "recapSecretKey": "your recaptcha secret key",
+    "recapSiteKey": "your recaptcha site key"
+}
+```
+
 # Donating
 
 Donations are always appreciated to support the running of the publically available instance, but are not required!

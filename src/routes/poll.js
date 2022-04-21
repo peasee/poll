@@ -5,6 +5,8 @@ const Poll = require("../models/Poll");
 const express = require("express");
 const route = express.Router();
 
+const verifyCaptcha = require("../functions/verifyCaptcha");
+
 /**
  * GET /api/poll/:pollID
  * 
@@ -53,7 +55,11 @@ route.get("/api/poll/:pollID/options", async (req, res)=>{
  * @error Returns 422 if the submitted body is invalid (missing options or title)
  */
 route.post("/api/poll", async (req, res)=>{
-    // TODO: confirm body for creating a poll
+    if(req.body.title == "" || req.body.title == null || typeof req.body.title !== "string" || req.body.title.length == 0) return res.status(422).json({error: "You must supply a poll title and it must be a string!"});
+    if(!(req.body.options instanceof Array) || req.body.options.length == 0 || req.body.options.filter(o=>typeof o !== "string").length > 0) return res.status(422).json({error: "You must supply one or more options and they must be strings!"});
+
+    if(!req.body.recap) return res.status(403).json({error: "We think you're a bot!"});
+    if(await verifyCaptcha(req.body.recap, "create") !== true) return res.status(403).json({error: "We think you're a bot!"});
 
     const pollID = await Poll.create(req.body);
 
