@@ -104,5 +104,4 @@ dist
 .tern-port
 
 nginx.conf
-config.json
 public/index.prod.html
