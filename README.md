@@ -1,6 +1,10 @@
 # poll
 An open source, high performance, polling platform
 
+# Usage
+
+A publically available instance of the polling software is available at https://poll.nullabyte.com for anyone to use, free of charge, free of ads, free of tracking.
+
 # Architecture
 
 This configuration assumes you're running your poller service behind CloudFlare, and relies on both the CloudFlare supplied headers for originating IP and HTTP->HTTPS redirection on the CloudFlare layer.
@@ -51,3 +55,14 @@ Now, you can start your application server with `npm start` inside repo director
 If you want to setup a systemd service for your application server, edit the included service file and modify `ExecStart` to point to your installed directory. Also edit the `start.sh` file and modify the directory with your installed directory. Copy the included service file `poller.service` into `/etc/systemd/system` and run `sudo systemctl daemon-reload`. Now you can start and manage your poller service through systemd, including enabling it to run at startup with `systemctl enable poller`. Finally, start your new service with `systemctl start poller`.
 
 Your new polling service should now be running!
+
+# Donating
+
+Donations are always appreciated to support the running of the publically available instance, but are not required!
+
+Donations are only supported in the following cryptocurrencies:
+
+ETH: 0x19005D14F8f0E69A9F3A474bB892B6C5844C1A63
+XMR: 42cACZ56C9dcd58Jd7winAQ1PJcoypSgsdhGcfgD2ZBiTL5kpWWv7YT2UoNjjxmor9TnRuQRx9jXmev7dmFqawtSNsncwSs
+RVN: RWGyhvVCYq7f7ZCersewpa8SAxEeFEKwRH
+ADA: 0x19005D14F8f0E69A9F3A474bB892B6C5844C1A63
