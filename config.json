@@ -1,7 +1,0 @@
-{
-    "threads": 2,
-    "port": 8081,
-    "host": "localhost",
-    "recapSecretKey": "recap secret",
-    "recapSiteKey": "recap site"
-}
