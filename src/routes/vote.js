@@ -16,11 +16,13 @@ const route = express.Router();
  * @error Returns a 403 if the user at the specified IP has already voted on this poll
  */
 route.post("/api/poll/:pollID/vote", async (req, res)=>{
-    if(await IPVoted.hasVoted(req.params.pollID, req.headers["cf-from"] || req.socket.remoteAddress) !== false) return res.status(403).json({error: "You've already voted on this poll!"});
+    // we assume trust in the cf-connecting-ip here because the only thing it can come from is CloudFlare
+    // ... assuming you're running behind CloudFlare, of course.
+    if(await IPVoted.hasVoted(req.params.pollID, req.headers["cf-connecting-ip"] || req.socket.remoteAddress) !== false) return res.status(403).json({error: "You've already voted on this poll!"});
 
     await Promise.all([
         Poll.vote(req.params.pollID, req.body.option),
-        IPVoted.vote(req.params.pollID, req.headers["cf-from"] || req.socket.remoteAddress)
+        IPVoted.vote(req.params.pollID, req.headers["cf-connecting-ip"] || req.socket.remoteAddress)
     ]);
 
     return res.json({voted: true});

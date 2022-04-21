@@ -1,0 +1,8 @@
+.roboto, a, p, div, li, input, button {
+    font-family: "Roboto", sans-serif;
+}
+
+.roboto-mono, h1, h2, h3, h4, h5, h6 {
+    font-family: "Roboto Mono", monospace;
+}
+

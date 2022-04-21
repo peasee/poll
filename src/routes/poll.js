@@ -39,7 +39,7 @@ route.get("/api/poll/:pollID/options", async (req, res)=>{
     const response = {};
 
     for(let i=0; i<Number(poll.optionCount); i++) {
-        repsonse[i+1] = poll[`${i+1}:count`];
+        response[i+1] = poll[`${i+1}:count`];
     }
 
     return res.json(response);

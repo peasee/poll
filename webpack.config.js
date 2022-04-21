@@ -34,7 +34,7 @@ module.exports = {
     devtool: "inline-source-map",
     plugins: [
       new webpack.DefinePlugin({
-        "API_HOST": `"${process.env["API_HOST"] ?? "http://localhost"}"`
+        "API_HOST": `"${process.env["API_HOST"] ?? "http://localhost:8081"}"`
       })
     ]
   };

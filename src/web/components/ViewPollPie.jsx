@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 
-export default function ViewPollPie(props) {
+import { PieChart } from "react-minimal-pie-chart";
+
+export function ViewPollPie(props) {
+    const pieData = props.options.map(o=>{
+        return {
+            title: o.prompt,
+            value: o.count,
+            color: o.color
+        };
+    });
+
+    if(props.totalVotes > 0)
+        return (
+            <div>
+                <PieChart data={pieData} radius={40}></PieChart>
+            </div>
+        )
+    
     return (
         <div>
-            <h1>View Poll Pie</h1>
+            <h4>There aren't any votes yet!</h4>
         </div>
     )
 }
