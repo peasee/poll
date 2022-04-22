@@ -24,19 +24,22 @@ rm -rf ./poll
 cd /opt/poller
 npm install
 
-echo >/opt/poller/config.json <<EOF
+cat >/opt/poller/config.json <<EOF
 {
     "threads": 2,
     "port": 8081,
-    "host": $1,
+    "host": "$1",
     "recapSecretKey": "recap secret",
     "recapSiteKey": "recap site"
 }
 EOF
 
-python3.9 generate_nginx_config.py --domain=$1
+python3 generate_nginx_config.py --domain=$1
 
-cp ./poller.service /etc/systemd/service/
+cp ./nginx.conf /etc/nginx/nginx.conf
+cp ./poller.service /etc/systemd/system/
 systemctl daemon-reload
-systemctl poller enable
-systemctl poller start
+systemctl enable poller
+systemctl start poller
+
+service nginx restart

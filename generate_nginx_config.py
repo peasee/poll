@@ -33,11 +33,11 @@ http {{
     access_log /var/log/nginx/access.log;
     error_log /var/log/nginx/error.log;
     gzip on;
-}}
 
-limit_req_zone $binary_remote_addr zone=pollBaseRoute:10m rate=12r/m;
-limit_req_zone $binary_remote_addr zone=pollPartialData:10m rate=20r/m;
-limit_req_zone $binary_remote_addr zone=pollVote:10m rate=10r/m;
+    limit_req_zone $binary_remote_addr zone=pollBaseRoute:10m rate=12r/m;
+    limit_req_zone $binary_remote_addr zone=pollPartialData:10m rate=20r/m;
+    limit_req_zone $binary_remote_addr zone=pollVote:10m rate=10r/m;
+}}
 
 server {{
     listen 443 ssl http2;
