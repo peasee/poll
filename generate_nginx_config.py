@@ -34,10 +34,6 @@ http {{
     error_log /var/log/nginx/error.log;
     gzip on;
 
-    limit_req_zone $binary_remote_addr zone=pollBaseRoute:10m rate=12r/m;
-    limit_req_zone $binary_remote_addr zone=pollPartialData:10m rate=20r/m;
-    limit_req_zone $binary_remote_addr zone=pollVote:10m rate=10r/m;
-
     server {{
         listen 443 ssl http2;
         server_name {1};
@@ -47,39 +43,7 @@ http {{
 
         add_header Strict-Transport-Security "max-age=15552000; includeSubDomains" always;
 
-        location ^~ /api/poll/\w*/vote$ {{
-            limit_req zone=pollVote;
-
-            client_max_body_size 1M;
-            proxy_pass http://127.0.0.1:{4};
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header Host $http_host;
-            proxy_set_header X-Forwarded-Host $http_host;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_max_temp_file_size 0;
-            proxy_redirect off;
-            proxy_read_timeout 120;
-        }}
-
-        location ^~ /api/poll/\w*/options$ {{
-            limit_req zone=pollPartialData;
-
-            client_max_body_size 1M;
-            proxy_pass http://127.0.0.1:{4};
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header Host $http_host;
-            proxy_set_header X-Forwarded-Host $http_host;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_max_temp_file_size 0;
-            proxy_redirect off;
-            proxy_read_timeout 120;
-        }}
-
-        location ^~ /api/poll/\w*$ {{
-            limit_req zone=pollBaseRoute;
-
+        location /api {{
             client_max_body_size 1M;
             proxy_pass http://127.0.0.1:{4};
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -94,6 +58,7 @@ http {{
 
         location / {{
             root /opt/poller/public;
+            try_files $uri /index.html;
         }}
     }}
 }}

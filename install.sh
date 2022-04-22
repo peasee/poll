@@ -6,7 +6,7 @@ echo "*                hard    nofile          40000" >>/etc/security/limits.con
 rm -rf /opt/poller
 
 apt update
-apt install python3 wget curl build-essential make gcc libreadline-gplv2-dev libncursesw5-dev -y
+apt install python3 wget curl build-essential make gcc openssl -y
 
 curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
 apt-get install nodejs -y
@@ -45,4 +45,5 @@ systemctl daemon-reload
 systemctl enable poller
 systemctl start poller
 
+openssl dhparam -out /etc/nginx/dhparam.pem 2048
 service nginx restart
