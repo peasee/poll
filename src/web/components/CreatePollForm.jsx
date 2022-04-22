@@ -72,7 +72,7 @@ export function CreatePollForm(props) {
 
     return (
         <Row>
-            <Col xs={6} className="offset-2">
+            <Col xs={8} md={6} className="offset-0 offset-md-2">
                 <Form onSubmit={createPoll}>
                     <Form.Group className="mb-3" controlId="formPollTitle">
                         <Form.Label>Title</Form.Label>

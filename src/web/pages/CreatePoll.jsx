@@ -11,12 +11,12 @@ export function CreatePoll(props) {
     return (
         <div>
             <Row>
-                <Col xs={8} className="offset-2 mt-1 mb-3">
+                <Col xs={12} md={8} className="offset-0 offset-md-2 mt-1 mb-3">
                     <Link to="/">Take me home!</Link>
                 </Col>
             </Row>
             <Row>
-                <Col xs={8} className="offset-2">
+                <Col xs={12} md={8} className="offset-0 offset-md-2">
                     <h4>Create a new poll</h4>
                     <p>
                         Fill out the form information below to make a new poll!

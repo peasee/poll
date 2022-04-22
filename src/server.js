@@ -8,6 +8,7 @@ const loadSourceIP = require("./middleware/loadSourceIP");
 const app = express();
 
 // app.use(morgan("dev"));
+app.use(loadSourceIP);
 app.use(bodyParser.json());
 app.use(cors());
 

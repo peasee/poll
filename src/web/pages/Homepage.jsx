@@ -13,15 +13,15 @@ export function Homepage(props) {
     return (
         <div>
             <Row>
-                <Col xs={8} className="offset-2">
+                <Col xs={12} md={8} className="offset-0 offset-md-2">
                     <p>
                         Don't care about the project and just want to make a poll? No problem. 
-                        <Link to="/poll" className="btn btn-warning mt-2 p-2 d-block w-25">Create a new poll</Link>
+                        <Link to="/poll" className="btn btn-warning mt-2 p-2 d-block w-50 w-md-25">Create a new poll</Link>
                     </p>
                 </Col>
             </Row>
             <Row className="mt-5">
-                <Col xs={8} className="offset-2">
+                <Col xs={12} md={8} className="offset-0 offset-md-2">
                     <h3>About the project</h3>
                     <hr />
                     <p>

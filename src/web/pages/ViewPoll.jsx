@@ -106,21 +106,21 @@ export function ViewPoll(props) {
         <div>
 
             <Row>
-                <Col xs={8} className="offset-2 mt-1 mb-5">
+                <Col xs={12} md={8} className="offset-0 offset-md-2 mt-1 mb-5">
                     <Link to="/" onClick={stopReloading}>Take me home!</Link>
                 </Col>
             </Row>
             <Row>
-                <Col xs={8} className="offset-2 mt-4">
+                <Col xs={12} md={8} className="offset-0 offset-md-2 mt-4">
                     <h4 className="d-block">{title}</h4>
                     <a href={`/poll/${pollID}`}>Share this link</a>
                 </Col>
             </Row>
             <Row className="mt-4">
-                <Col xs={8} className="offset-2 border rounded p-4">
+                <Col xs={12} md={8} className="offset-0 offset-md-2 border rounded p-4">
                     <Container fluid>
                         <Row>
-                            <Col xs={6} className="d-flex flex-column justify-content-evenly">
+                            <Col xs={12} md={6} className="d-flex flex-column justify-content-evenly">
                                 <div>
                                     <h4>Total Votes: {totalVotes}</h4>
                                     <span className="small text-muted">Results update every 5 seconds</span>
@@ -136,7 +136,7 @@ export function ViewPoll(props) {
                                     showError={props.showError}>
                                 </ViewPollOption>)}
                             </Col>
-                            <Col xs={6} className="d-flex flex-column justify-content-center">
+                            <Col xs={12} md={6} className="d-flex flex-column justify-content-center">
                                 <ViewPollPie options={options} totalVotes={totalVotes}></ViewPollPie>
                             </Col>
                         </Row>

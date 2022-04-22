@@ -40,7 +40,7 @@ export default function App(props) {
     return (
         <Container fluid className="p-3">
             <Row>
-                <Col xs={8} className="offset-2">
+                <Col xs={12} md={8} className="offset-0 offset-md-2">
                     <h1>Poll - The Open-Source Poller</h1>
                     <hr />
                     {displayModal()}
