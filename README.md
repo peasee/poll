@@ -28,8 +28,12 @@ I'm not rich. That's all. Making this kind of application scale using something 
 
 # Installation
 
-You can run the included easy-install script like `sudo install.sh` to install the application into `/opt/poller` and install all requirements.
+You can run the included easy-install script like `sudo bash install.sh domain.com` to install the application into `/opt/poller` and install all requirements.
+The installer script still assumes your certs are located in `/etc/nginx/keys/domain.com.key` and `/etc/nginx/keys/domain.com.cert`.
+
 If you don't want to use the easy-install script, read on!
+
+
 
 Installing the poller service is simple. Requirements are:
 - A Redis server
