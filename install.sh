@@ -32,6 +32,7 @@ cat >/opt/poller/config.json <<EOF
     "threads": 2,
     "port": 8081,
     "host": "$1",
+    "clientAPI": "https://$1",
     "recapSecretKey": "recap secret",
     "recapSiteKey": "recap site"
 }

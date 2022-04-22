@@ -23,6 +23,7 @@ route.get("/api/poll/:pollID", async (req, res)=>{
         if(RateLimiter.canHit(req.sourceIP, "PollView") !== true) return res.status(429).json();
         if(await Poll.exists(req.params.pollID) !== true) return res.status(404).json({error: "Not found"});
 
+        RateLimiter.hasHit(req.sourceIP, "PollCreate");
         return res.json(await Poll.get(req.params.pollID));
     } catch (err) {
         console.error(err);
@@ -53,6 +54,7 @@ route.get("/api/poll/:pollID/options", async (req, res)=>{
             response[i+1] = poll[`${i+1}:count`];
         }
 
+        RateLimiter.hasHit(req.sourceIP, "PollCreate");
         return res.json(response);
     } catch (err) {
         console.error(err);
@@ -81,6 +83,7 @@ route.post("/api/poll", async (req, res)=>{
 
         const pollID = await Poll.create(req.body);
 
+        RateLimiter.hasHit(req.sourceIP, "PollCreate");
         return res.json({id: pollID});
     } catch (err) {
         console.error(err);

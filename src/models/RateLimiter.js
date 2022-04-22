@@ -21,7 +21,7 @@ setInterval(hitCleanup, 60000);
 module.exports = {
     canHit(ip, route) {
         const keyHash = createHash("sha1").update(`${ip}${route}`).digest("hex");
-        return currentHits == null || currentHits[keyHash] + ROUTE_LIMITS[route] < Date.now();
+        return currentHits[keyHash] == null || currentHits[keyHash] + ROUTE_LIMITS[route] < Date.now();
     },
 
     hasHit(ip, route) {

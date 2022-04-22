@@ -37,6 +37,7 @@ route.post("/api/poll/:pollID/vote", async (req, res)=>{
             IPVoted.vote(req.params.pollID, req.sourceIP)
         ]);
 
+        RateLimiter.hasHit(req.sourceIP, "PollCreate");
         return res.json({voted: true});
     } catch (err) {
         console.error(err);
