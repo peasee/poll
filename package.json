@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run build && node src/index.js",
-    "build": "echo 'This would build the webpack stuff'",
+    "build": "webpack build --mode production --progress && cp ./dist/bundle.js ./public",
     "build:dev": "webpack server --mode development"
   },
   "repository": {

@@ -106,3 +106,4 @@ dist
 nginx.conf
 public/index.prod.html
 config.json
+bundle.js

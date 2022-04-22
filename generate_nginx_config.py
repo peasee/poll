@@ -92,7 +92,7 @@ http {{
             proxy_read_timeout 120;
         }}
 
-        location /static {{
+        location / {{
             root /opt/poller/public;
         }}
     }}
