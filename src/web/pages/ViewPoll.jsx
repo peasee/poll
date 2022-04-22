@@ -98,12 +98,16 @@ export function ViewPoll(props) {
         }
     }
 
+    function stopReloading() {
+        clearInterval(intervalID);
+    }
+
     return (
         <div>
 
             <Row>
                 <Col xs={8} className="offset-2 mt-1 mb-5">
-                    <Link to="/">Take me home!</Link>
+                    <Link to="/" onClick={stopReloading}>Take me home!</Link>
                 </Col>
             </Row>
             <Row>
