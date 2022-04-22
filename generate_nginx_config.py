@@ -48,7 +48,7 @@ http {{
         add_header Strict-Transport-Security "max-age=15552000; includeSubDomains" always;
 
         location ^~ /api/poll/\w*/vote$ {{
-            limit_req zone=pollVote
+            limit_req zone=pollVote;
 
             client_max_body_size 1M;
             proxy_pass http://127.0.0.1:{4};
@@ -63,7 +63,7 @@ http {{
         }}
 
         location ^~ /api/poll/\w*/options$ {{
-            limit_req zone=pollPartialData
+            limit_req zone=pollPartialData;
 
             client_max_body_size 1M;
             proxy_pass http://127.0.0.1:{4};
@@ -78,7 +78,7 @@ http {{
         }}
 
         location ^~ /api/poll/\w*$ {{
-            limit_req zone=pollBaseRoute
+            limit_req zone=pollBaseRoute;
 
             client_max_body_size 1M;
             proxy_pass http://127.0.0.1:{4};
@@ -93,7 +93,7 @@ http {{
         }}
 
         location /static {{
-            root /opt/poller/public
+            root /opt/poller/public;
         }}
     }}
 }}

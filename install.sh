@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "*                soft    nofile          10000" >>/etc/security/limits.conf
+echo "*                hard    nofile          40000" >>/etc/security/limits.conf
+
 rm -rf /opt/poller
 
 apt update
