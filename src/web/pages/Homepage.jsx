@@ -34,12 +34,12 @@ export function Homepage(props) {
                         Perfect for users with high-traffic polls that have the resources to pay for equally high-performance servers.
                     </p>
                     <p>
-                        You can view the source code (including basic instructions on setup) <a href="#">at the GitHub repo</a>.
+                        You can view the source code (including basic instructions on setup) <a href="https://github.com/peasee/poll">at the GitHub repo</a>.
                         You can also raise issues on the repo if you encounter any bugs.
                     </p>
                     <p>
                         The publically provided instance does not run any advertisements nor analytics (excluding ReCaptcha) - the only thing you load is the tool.
-                        Donations are appreciated to support the running of this instance, but are not required! <a href="#">View the details on the repo</a> for how to donate, if you're so inclined.
+                        Donations are appreciated to support the running of this instance, but are not required! <a href="https://github.com/peasee/poll">View the details on the repo</a> for how to donate, if you're so inclined.
                     </p>
                 </Col>
             </Row>
