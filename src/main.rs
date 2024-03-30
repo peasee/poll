@@ -1,9 +1,14 @@
 use anyhow::Result;
-use serde_json::{json, Value};
+
+use std::collections::BTreeMap;
+use std::sync::Arc;
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
-use axum::{extract::Path, http::StatusCode, routing::get, Json, Router};
+use axum::{routing::get, Router};
+
+use poll::models::AppState;
+use poll::routes::alive::{alive, alive_with_error, alive_with_name, alive_with_state};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -18,22 +23,21 @@ async fn main() -> Result<()> {
 
     info!("Hello, world!");
 
+    let shared_state = Arc::new(AppState {
+        polls: BTreeMap::new(),
+    });
+
     // build our application with a route
     let app = Router::new()
         .route("/alive", get(alive))
-        .route("/alive/:name", get(alive_with_name));
+        .route("/alive/with_state", get(alive_with_state))
+        .route("/alive/with_error", get(alive_with_error))
+        .route("/alive/:name", get(alive_with_name))
+        .with_state(shared_state);
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3081").await?;
     axum::serve(listener, app).await?;
 
     Ok(())
-}
-
-async fn alive() -> (StatusCode, Json<Value>) {
-    (StatusCode::OK, Json(json!({ "hello": "world" })))
-}
-
-async fn alive_with_name(Path(name): Path<String>) -> (StatusCode, Json<Value>) {
-    (StatusCode::OK, Json(json!({ "hello": name })))
 }
