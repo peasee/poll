@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use super::Voter;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct PollOption {
     pub id: String,
     pub title: String,
@@ -28,7 +28,7 @@ impl PollOption {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Poll {
     pub id: String,
     pub title: String,

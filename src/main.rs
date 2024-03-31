@@ -1,7 +1,8 @@
 use anyhow::Result;
+use axum::routing::post;
 
 use std::collections::BTreeMap;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
@@ -23,9 +24,9 @@ async fn main() -> Result<()> {
 
     info!("Hello, world!");
 
-    let shared_state = Arc::new(AppState {
+    let shared_state = Arc::new(RwLock::new(AppState {
         polls: BTreeMap::new(),
-    });
+    }));
 
     // build our application with a route
     let app = Router::new()
@@ -33,6 +34,12 @@ async fn main() -> Result<()> {
         .route("/alive/with_state", get(alive_with_state))
         .route("/alive/with_error", get(alive_with_error))
         .route("/alive/:name", get(alive_with_name))
+        .route("/poll/:id", get(poll::routes::polls::get_poll))
+        .route(
+            "/poll/:id/options",
+            get(poll::routes::polls::get_poll_options),
+        )
+        .route("/poll", post(poll::routes::polls::create_poll))
         .with_state(shared_state);
 
     // run our app with hyper, listening globally on port 3000
