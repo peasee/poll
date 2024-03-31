@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 
 use axum::{extract::State, response::Result};
 use serde_json::{json, Value};
@@ -23,7 +23,20 @@ pub async fn alive_with_name(Path(name): Path<String>) -> (StatusCode, Json<Valu
 }
 
 // This example route pulls the state from the app
-pub async fn alive_with_state(State(state): State<Arc<AppState>>) -> (StatusCode, Json<Value>) {
+pub async fn alive_with_state(
+    State(state): State<Arc<RwLock<AppState>>>,
+) -> (StatusCode, Json<Value>) {
+    let state = state.read();
+
+    if state.is_err() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "error": "Failed to read state" })),
+        );
+    }
+
+    let state = state.unwrap();
+
     (StatusCode::OK, Json(json!({ "polls": state.polls.len() })))
 }
 
