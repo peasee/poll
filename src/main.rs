@@ -40,6 +40,7 @@ async fn main() -> Result<()> {
             get(poll::routes::polls::get_poll_options),
         )
         .route("/poll", post(poll::routes::polls::create_poll))
+        .route("/poll/:id/vote", post(poll::routes::polls::vote_poll))
         .with_state(shared_state);
 
     // run our app with hyper, listening globally on port 3000

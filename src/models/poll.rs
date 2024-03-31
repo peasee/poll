@@ -23,8 +23,8 @@ impl PollOption {
         }
     }
 
-    pub fn vote(&mut self, voter: &Voter) {
-        self.votes.insert(voter.clone());
+    pub fn vote(&mut self, voter: &Voter) -> bool {
+        self.votes.insert(voter.clone())
     }
 }
 

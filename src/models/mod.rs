@@ -6,3 +6,6 @@ pub use voter::*;
 
 mod state;
 pub use state::*;
+
+mod view;
+pub use view::*;

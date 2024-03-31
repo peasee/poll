@@ -1,72 +1,31 @@
-use std::{
-    collections::HashMap,
-    sync::{Arc, RwLock},
-};
+use std::sync::{Arc, RwLock};
 
-use axum::extract::State;
-use serde::{Deserialize, Serialize};
+use axum::{extract::State, response::Result};
+
 use serde_json::{json, Value};
 
-use crate::models::{AppState, Voter};
+use crate::models::{
+    APIError, APILock, AppState, NewPollBody, Poll, PollPartialView, PollView, PollVoteBody, Voter,
+};
 
 use axum::{extract::Path, http::StatusCode, Json};
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct PollView {
-    pub title: String,
-    #[serde(rename = "optionCount")]
-    pub option_count: u32,
-    #[serde(flatten)]
-    pub options: HashMap<String, String>,
-}
 
 /// GET /poll/:id
 /// Returns a poll with the given id
 pub async fn get_poll(
     Path(id): Path<String>,
     State(state): State<Arc<RwLock<AppState>>>,
-) -> (StatusCode, Json<Value>) {
-    let guard = state.read();
-
-    if guard.is_err() {
-        return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({ "error": "Failed to read state" })),
-        );
-    }
-
-    let guard = guard.unwrap();
+) -> Result<(StatusCode, Json<Value>)> {
+    let guard = state.read_lock()?;
 
     match guard.polls.get(&id) {
         Some(poll) => {
-            let mut view = PollView {
-                title: poll.title.clone(),
-                option_count: poll.options.len() as u32,
-                options: HashMap::new(),
-            };
+            let view = PollView::from(poll);
 
-            for (i, option) in poll.options.iter().enumerate() {
-                view.options.insert(
-                    format!("{:#?}:count", i + 1),
-                    option.votes.len().to_string(),
-                );
-                view.options
-                    .insert(format!("{:#?}:prompt", i + 1), option.title.clone());
-            }
-
-            (StatusCode::OK, Json(json!(view)))
+            Ok((StatusCode::OK, Json(json!(view))))
         }
-        None => (
-            StatusCode::NOT_FOUND,
-            Json(json!({ "error": "Poll not found" })),
-        ),
+        None => Err(APIError::PollNotFound.into()),
     }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct PollPartialView {
-    #[serde(flatten)]
-    pub options: HashMap<String, String>,
 }
 
 /// GET /poll/:id/options
@@ -74,35 +33,16 @@ struct PollPartialView {
 pub async fn get_poll_options(
     Path(id): Path<String>,
     State(state): State<Arc<RwLock<AppState>>>,
-) -> (StatusCode, Json<Value>) {
-    let guard = state.read();
-
-    if guard.is_err() {
-        return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({ "error": "Failed to read state" })),
-        );
-    }
-
-    let guard = guard.unwrap();
+) -> Result<(StatusCode, Json<Value>)> {
+    let guard = state.read_lock()?;
 
     match guard.polls.get(&id) {
         Some(poll) => {
-            let mut view = PollPartialView {
-                options: HashMap::new(),
-            };
+            let view = PollPartialView::from(poll);
 
-            for (i, option) in poll.options.iter().enumerate() {
-                view.options
-                    .insert(format!("{:#?}", i + 1), option.votes.len().to_string());
-            }
-
-            (StatusCode::OK, Json(json!(view)))
+            Ok((StatusCode::OK, Json(json!(view))))
         }
-        None => (
-            StatusCode::NOT_FOUND,
-            Json(json!({ "error": "Poll not found" })),
-        ),
+        None => Err(APIError::PollNotFound.into()),
     }
 }
 
@@ -110,74 +50,44 @@ pub async fn get_poll_options(
 /// Create a new poll
 pub async fn create_poll(
     State(state): State<Arc<RwLock<AppState>>>,
-    Json(body): Json<serde_json::Value>,
-) -> (StatusCode, Json<Value>) {
-    let guard = state.write();
+    Json(body): Json<serde_json::Value>, // it sucks that we can't just do: Json<NewPollBody>,
+                                         // because for API servers, we can't control the error response in axum when the deserialize fails
+                                         // see more: https://github.com/tokio-rs/axum/issues/1116
+) -> Result<(StatusCode, Json<Value>)> {
+    let mut guard = state.write_lock()?;
 
-    if guard.is_err() {
-        return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({ "error": "Failed to read state" })),
-        );
-    }
+    let body = NewPollBody::try_from(body)?; // instead, we have a TryFrom implementation which throws an APIError
+                                             // here, we can control our response when the deserialization fails
 
-    let mut guard = guard.unwrap();
+    let poll = Poll::from(body);
+    guard.polls.insert(poll.id.clone(), poll.clone());
 
-    let poll = body
-        .as_object()
-        .and_then(|body| {
-            let title = body.get("title")?.as_str()?;
-            let options = body.get("options")?.as_array()?;
-            let options = options
-                .iter()
-                .map(|option| option.as_str().map(|s| s.to_string()));
-            Some((title.to_string(), options.collect::<Option<Vec<_>>>()?))
-        })
-        .map(|(title, options)| {
-            let mut poll = crate::models::Poll::new(title, None);
-
-            for option in options {
-                poll.add_option(crate::models::PollOption::new(option, None));
-            }
-
-            guard.polls.insert(poll.id.clone(), poll.clone());
-            poll
-        });
-
-    match poll {
-        Some(poll) => (StatusCode::CREATED, Json(json!({"id": poll.id}))),
-        None => (
-            StatusCode::BAD_REQUEST,
-            Json(json!({ "error": "Invalid poll" })),
-        ),
-    }
+    Ok((StatusCode::CREATED, Json(json!({"id": poll.id}))))
 }
 
 /// POST /poll/:id/vote
 /// Vote on a poll
 pub async fn vote_poll(
-    Path(_id): Path<String>,
+    Path(id): Path<String>,
     State(state): State<Arc<RwLock<AppState>>>,
-    Json(_body): Json<serde_json::Value>,
-) -> (StatusCode, Json<Value>) {
-    let guard = state.write();
+    Json(body): Json<serde_json::Value>,
+) -> Result<(StatusCode, Json<Value>)> {
+    let mut guard = state.write_lock()?;
 
-    if guard.is_err() {
-        return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({ "error": "Failed to read state" })),
-        );
-    }
+    let body = PollVoteBody::try_from(body)?;
+    match guard.polls.get_mut(&id) {
+        Some(poll) => {
+            // the option is the array index of the target option + 1
+            let option = poll
+                .options
+                .get_mut((body.option - 1) as usize)
+                .ok_or(APIError::OptionNotFound)?;
 
-    let _guard = guard.unwrap();
+            let voter = Voter::new("localhost".to_string(), id.clone(), body.option);
+            let voted = option.vote(&voter);
 
-    let vote: Option<Voter> = None;
-
-    match vote {
-        Some(_vote) => (StatusCode::CREATED, Json(json!({"done": "yes"}))),
-        None => (
-            StatusCode::BAD_REQUEST,
-            Json(json!({ "error": "Invalid poll" })),
-        ),
+            Ok((StatusCode::OK, Json(json!({"voted": voted}))))
+        }
+        None => Err(APIError::PollNotFound.into()),
     }
 }
