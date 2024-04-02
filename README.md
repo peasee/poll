@@ -3,7 +3,7 @@ An open source, high performance, polling platform
 
 # Usage
 
-~~A publically available instance of the polling software is available at https://poll.nullabyte.com for anyone to use, free of charge, free of ads, free of tracking (only using ReCaptcha).~~ I shut down the public instance because nobody uses it, oh well!
+~~A publicly available instance of the polling software is available at https://poll.nullabyte.com for anyone to use, free of charge, free of ads, free of tracking (only using ReCaptcha).~~ I shut down the public instance because nobody uses it, oh well!
 
 # Architecture
 
