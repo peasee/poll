@@ -30,7 +30,7 @@ export function Homepage(props) {
                         Votes on polls are restricted to a single vote per-IP, and are secured with ReCaptcha to limit botted submissions.
                     </p>
                     <p>
-                        Benefits of this project being open-source is that if you don't like using the publically provided instance at <a href="https://poll.nullabyte.com">https://poll.nullabyte.com</a>, you can host it yourself on your own infrastructure!
+                        Benefits of this project being open-source is that if you don't like using the publicly provided instance at <a href="https://poll.nullabyte.com">https://poll.nullabyte.com</a>, you can host it yourself on your own infrastructure!
                         Perfect for users with high-traffic polls that have the resources to pay for equally high-performance servers.
                     </p>
                     <p>
@@ -38,7 +38,7 @@ export function Homepage(props) {
                         You can also raise issues on the repo if you encounter any bugs.
                     </p>
                     <p>
-                        The publically provided instance does not run any advertisements nor analytics (excluding ReCaptcha) - the only thing you load is the tool.
+                        The publicly provided instance does not run any advertisements nor analytics (excluding ReCaptcha) - the only thing you load is the tool.
                         Donations are appreciated to support the running of this instance, but are not required! <a href="https://github.com/peasee/poll">View the details on the repo</a> for how to donate, if you're so inclined.
                     </p>
                 </Col>

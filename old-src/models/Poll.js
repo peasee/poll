@@ -67,10 +67,10 @@ module.exports = {
      * 
      * Returns a boolean check if the poll with the specified ID exists.
      * Utilises the intermediary cache - 
-     *  the thought being high-traffic polls will hit the cache for existance checks instead of performing hExists operations on Redis.
+     *  the thought being high-traffic polls will hit the cache for existence checks instead of performing hExists operations on Redis.
      * 
      * @param {string} pollID - the ID of the poll to check
-     * @returns {boolean} the result of the existance check
+     * @returns {boolean} the result of the existence check
      */
     async exists(pollID) {
         await this.recache(pollID);
@@ -96,7 +96,7 @@ module.exports = {
     /**
      * @name Poll.vote
      * 
-     * Increments an option for the poll by 1. Does not check for existance of the option nor poll being incremented.
+     * Increments an option for the poll by 1. Does not check for existence of the option nor poll being incremented.
      * 
      * @param {string} pollID - the poll to increment a vote on
      * @param {number} optionID - the option to increment
