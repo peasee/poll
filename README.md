@@ -1,69 +1,41 @@
 # poll
 An open source, high performance, polling platform
 
-# Usage
+# Table of Contents
+1. [V2 Backend](#backend)
+    - [Why not AWS?](#aws)
+2. [Getting Started](#getting-started)
+    - [Config format](#config)
 
-~~A publicly available instance of the polling software is available at https://poll.nullabyte.com for anyone to use, free of charge, free of ads, free of tracking (only using ReCaptcha).~~ I shut down the public instance because nobody uses it, oh well!
+# V2 Backend<a name="backend"></a>
 
-# Architecture
+I've recently gone on an adventure to update the backend of this polling service to be a Rust backend, using `axum` as a web server.
+The service now also uses a Docker Compose file to make it easy to spin up your own instance of this service.
 
-This configuration assumes you're running your poller service behind CloudFlare, and relies on both the CloudFlare supplied headers for originating IP and HTTP->HTTPS redirection on the CloudFlare layer.
+Why did I migrate to Rust as a backend?
 
-It's also helpful for setting up NGINX on your application server, where you can just upload the CloudFlare supplied SSL certificate for use in NGINX instead of troubling with LetsEncrypt.
+1. It's much, _much_ faster than NodeJS. Using `autocannon` with 8 worker threads on a 32-core 2x Intel Xeon E5-2450 v2 CPUs achieved around 140,000 requests per second. A single worker thread achieved 18,000 requests per second. Granted, this includes the removal of writes/reads to redis, but impressive nonetheless.
+2. Rust is now one of my primary languages, although I've never used it as a web server. I thought it would be a fun exercise to try updating the backend.
+3. All benefits (and cons) of the entire Rust language - type and memory safety, traits, etc.
 
-The Poller service is backed by a Redis database, running an Express application served with NGINX. This can all be on the same machine, or can be scaled out across many machines for improved load capacity. For example, you could setup a redis cluster across multiple separate machines, with multiple application servers load balanced by a dedicated NGINX server.
+I also removed redis as a requirement, and replaced it with a simple in-memory `BTreeMap` because chances are you don't care about the results of your poll for any longer than 30 minutes and if the server restarts while you're running your poll you'll probably just remake the poll.
+Removing redis also helped drastically increase the requests per second throughput.
 
-Some other considerations for performance have been made with this implementation like:
-- Adding rate limiting to poll data GET methods, throttling requests to reasonable timeframes.
-- Adding a thin GET method to return only the count of votes per method, suitable for when a client already has the poll data and just needs a vote count update. This reduces the network bandwidth used in sending a response.
-- Using in-memory caches with short TTLs for poll data, to reduce Redis database hits and lower CPU usage while still providing reasonable timeliness.
-- Not performing sanity checks for an option ID when a client is voting. The only time an option would be voted for that doesn't exist is by an attacker using an automated method. End users will never see these "phantom" votes, so there's little use in wasting CPU cycles sanity checking them.
-- Utilising a random wait in the React client when performing web requests, in an attempt to balance peaky loads from the client side. The client performs a random wait between 100-1500ms before performing the web request, on each web request.
+## But why not AWS?<a name="aws"></a>
 
-# But why not AWS?
+"Oh, you want scaling performance to the moon? Why didn't you just make this in AWS?"
 
-"Oh, you want scaling performance? Why didn't you just make this in AWS?"
+I'm not rich. That's all. Making this kind of application scale using something like DynamoDB/SQS/Lambda/API Gateway at a high load rate of 15 million votes per month (about 100 polls per day with 5000 votes) has a comparative cost of about $200 USD per month.
 
-I'm not rich. That's all. Making this kind of application scale using something like DynamoDB/SQS/Lambda/API Gateway at a high load rate of 15 million votes per month (about 100 polls per day with 5000 votes) has a comparative cost of about $200 USD per month. Sure, it'll scale to essentially infinity loads, but this is only an averaged rate of about 350 requests / second, maybe peaking at the creation of polls around 1-2k requests / second. A $40 USD per month VPS will give you 3-4x this capacity, at a fifth of the cost.
+Sure, it'll scale to essentially infinity loads, but this is only an averaged rate of about 350 requests / second, maybe peaking at the creation of polls around 1-2k requests / second.
 
-# Installation
+A $15 USD per month VPS will give you 10-20x this capacity, at a fraction of the cost.
 
-You can run the included easy-install script like `sudo bash install.sh domain.com` to install the application into `/opt/poller` and install all requirements.
-The installer script still assumes your certs are located in `/etc/nginx/keys/domain.com.key` and `/etc/nginx/keys/domain.com.cert`.
+# Getting Started<a name="getting_started"></a>
 
-If you don't want to use the easy-install script, read on!
+TODO
 
-
-
-Installing the poller service is simple. Requirements are:
-- A Redis server
-- NodeJS 14 LTS or higher
-- An NGINX server
-- Python 3.9.6 or higher (for the generation of the NGINX configuration file)
-
-This installation guide assumes all of these things are installed on the same machine, and that you're using a Debian-based operating system.
-This guide also assumes that you've already configured CloudFlare with your domain to point to this machine, and that your CloudFlare private key and cert exist on the machine already.
-
-Clone this repo into your destination server, then install the required packages.
-
-    npm install
-
-Edit the configuration file `config.json`, changing your preferred local port and the number of worker threads (this should equal the total cores on the machine).
-
-Next, produce your NGINX configuration file using the provided Python script like `py generate_nginx_config.py --domain example.com`.
-View all supported arguments with `py generate_nginx_config.py --help`.
-If you do not supply a path to your SSL private key or certificate, the script assumes a path like `/etc/nginx/keys/domain.com.key` and `/etc/nginx/keys/domain.com.cert` respectively.
-
-The total worker connections in NGINX are set to 10000 per worker. This requires modification of the ulimit to at least a value of 10000 to ensure smooth operation - the default on most Linux installation is well below this value. If you don't know how to do this, a quick Google will help you out.
-
-Copy the generated `nginx.conf` into and replace the existing configuration in `/etc/nginx/nginx.conf`. Restart NGINX with `service nginx restart`.
-Now, you can start your application server with `npm start` inside repo directory you cloned earlier. Do a Ctrl+C to exit the server.
-
-If you want to setup a systemd service for your application server, edit the included service file and modify `ExecStart` to point to your installed directory. Also edit the `start.sh` file and modify the directory with your installed directory. Copy the included service file `poller.service` into `/etc/systemd/system` and run `sudo systemctl daemon-reload`. Now you can start and manage your poller service through systemd, including enabling it to run at startup with `systemctl enable poller`. Finally, start your new service with `systemctl start poller`.
-
-Your new polling service should now be running!
-
-# Config Format
+## Config Format<a name="config"></a>
 
 The config file needs to be formatted like the following example:
 
