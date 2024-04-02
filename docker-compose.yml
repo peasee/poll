@@ -1,0 +1,11 @@
+services:
+  api:
+    build:
+      dockerfile: api.Dockerfile
+  frontend:
+    build:
+      dockerfile: web.Dockerfile
+    ports:
+        - "3081:80"
+    links:
+        - api
