@@ -103,7 +103,6 @@ dist
 # TernJS port file
 .tern-port
 
-nginx.conf
 public/index.prod.html
 config.json
 bundle.js

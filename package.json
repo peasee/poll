@@ -4,7 +4,6 @@
   "description": "An open source, high performance, polling platform",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && node src/index.js",
     "build": "webpack build --mode production --progress && cp ./dist/bundle.js ./public",
     "build:dev": "webpack server --mode development"
   },
