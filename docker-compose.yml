@@ -8,10 +8,8 @@ services:
       - PORT=${PORT:-3081}
       - HOST=${HOST:-0.0.0.0}
       - API_HOST=${API_HOST:-http://localhost:3081}
-  frontend:
-    build:
-      dockerfile: frontend.Dockerfile
     ports:
-        - "3081:80"
-    links:
-        - api
+      - "${PORT:-3081}:${PORT:-3081}"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8

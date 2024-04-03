@@ -1,6 +1,7 @@
 mod create_poll;
 mod get_poll;
 mod get_poll_options;
+pub mod static_routes;
 mod vote_poll;
 
 pub mod polls {

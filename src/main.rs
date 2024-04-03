@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 
     let config = poll::models::AppConfiguration::parse();
 
-    let bind_string = format!("{}:{}", config.host, config.port);
+    let bind_string = format!("0.0.0.0:{}", config.port);
 
     let shared_state = Arc::new(Mutex::new(AppState {
         polls: BTreeMap::new(),
@@ -36,6 +36,11 @@ async fn main() -> Result<()> {
 
     // build our application with routes
     let app = Router::new()
+        .route("/", get(poll::routes::static_routes::get_index))
+        .route("/index.html", get(poll::routes::static_routes::get_index))
+        .route("/poll", get(poll::routes::static_routes::get_index))
+        .route("/poll/:id", get(poll::routes::static_routes::get_index))
+        .route("/bundle.js", get(poll::routes::static_routes::get_bundle))
         .route("/api/poll/:id", get(poll::routes::polls::get_poll))
         .route(
             "/api/poll/:id/options",
