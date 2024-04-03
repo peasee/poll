@@ -94,8 +94,7 @@ impl TryFrom<serde_json::Value> for NewPollBody {
 
         let recaptcha_token = value
             .get("recaptcha_token")
-            .and_then(Value::as_str)
-            .map_or(None, |f| Some(f.to_string()));
+            .and_then(Value::as_str).map(|f| f.to_string());
 
         Ok(NewPollBody {
             title: title.to_string(),
@@ -135,8 +134,7 @@ impl TryFrom<serde_json::Value> for PollVoteBody {
 
         let recaptcha_token = value
             .get("recaptcha_token")
-            .and_then(Value::as_str)
-            .map_or(None, |f| Some(f.to_string()));
+            .and_then(Value::as_str).map(|f| f.to_string());
 
         Ok(PollVoteBody {
             option,
