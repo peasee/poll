@@ -1,16 +1,6 @@
-use std::sync::Arc;
+use axum::response::{Html, Result};
 
-use axum::{
-    extract::State,
-    response::{Html, Result},
-};
-
-use serde_json::{json, Value};
-use tokio::sync::Mutex;
-
-use crate::models::{APIError, AppState, PollView};
-
-use axum::{extract::Path, http::StatusCode, Json};
+use axum::http::StatusCode;
 
 /// GET /index.html
 /// Returns a poll with the given id
