@@ -23,8 +23,6 @@ async fn verify_recaptcha(
         .send()
         .await?.json::<RecaptchaResponse>().await?;
 
-    tracing::info!("{:#?}", res.hostname);
-
     let valid = res.success == true
         && res.hostname == config.host
         && res.action == originating_route
@@ -57,7 +55,7 @@ impl Recaptcha for PollVoteBody {
         let recaptcha_response = verify_recaptcha(
             config,
             self.recaptcha_token.as_ref().unwrap_or(&String::new()),
-            "create",
+            "vote",
         )
         .await;
 
@@ -82,7 +80,7 @@ impl Recaptcha for NewPollBody {
         let recaptcha_response = verify_recaptcha(
             config,
             self.recaptcha_token.as_ref().unwrap_or(&String::new()),
-            "vote",
+            "create",
         )
         .await;
 
