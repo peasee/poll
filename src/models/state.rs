@@ -1,4 +1,4 @@
-use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
+
 
 use axum::response::{IntoResponse, Response, Result};
 use serde::{Deserialize, Serialize};
@@ -19,6 +19,8 @@ pub enum APIError {
     OptionNotFound,
     InvalidRequest,
     StateError,
+    ConfigurationError,
+    InvalidToken,
 }
 
 impl IntoResponse for APIError {
@@ -44,22 +46,19 @@ impl IntoResponse for APIError {
                 Json(json!({ "error": "Option not found" })),
             )
                 .into_response(),
+            APIError::ConfigurationError => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(
+                    json!({ "error": "Invalid service configuration. Contact the administrator." }),
+                ),
+            )
+                .into_response(),
+            APIError::InvalidToken => (
+                StatusCode::UNAUTHORIZED,
+                Json(json!({ "error": "Invalid recaptcha token" })),
+            )
+                .into_response(),
         }
-    }
-}
-
-pub trait APILock {
-    fn read_lock(&self) -> Result<RwLockReadGuard<AppState>, APIError>;
-    fn write_lock(&self) -> Result<RwLockWriteGuard<AppState>, APIError>;
-}
-
-impl APILock for Arc<RwLock<AppState>> {
-    fn read_lock(&self) -> Result<RwLockReadGuard<AppState>, APIError> {
-        self.read().map_err(|_| APIError::StateError)
-    }
-
-    fn write_lock(&self) -> Result<RwLockWriteGuard<AppState>, APIError> {
-        self.write().map_err(|_| APIError::StateError)
     }
 }
 
@@ -94,7 +93,8 @@ impl TryFrom<serde_json::Value> for NewPollBody {
 
         let recaptcha_token = value
             .get("recaptcha_token")
-            .and_then(Value::as_str).map(|f| f.to_string());
+            .and_then(Value::as_str)
+            .map(|f| f.to_string());
 
         Ok(NewPollBody {
             title: title.to_string(),
@@ -134,7 +134,8 @@ impl TryFrom<serde_json::Value> for PollVoteBody {
 
         let recaptcha_token = value
             .get("recaptcha_token")
-            .and_then(Value::as_str).map(|f| f.to_string());
+            .and_then(Value::as_str)
+            .map(|f| f.to_string());
 
         Ok(PollVoteBody {
             option,
