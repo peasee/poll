@@ -1,9 +1,10 @@
 use anyhow::Result;
 use axum::routing::post;
 use clap::Parser;
+use tokio::sync::Mutex;
 
 use std::collections::BTreeMap;
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
@@ -25,9 +26,10 @@ async fn main() -> Result<()> {
     info!("Poll API starting up...");
 
     let config = poll::models::AppConfiguration::parse();
+
     let bind_string = format!("{}:{}", config.host, config.port);
 
-    let shared_state = Arc::new(RwLock::new(AppState {
+    let shared_state = Arc::new(Mutex::new(AppState {
         polls: BTreeMap::new(),
         config,
     }));

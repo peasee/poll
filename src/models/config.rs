@@ -1,6 +1,6 @@
 use clap::Parser;
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Parser, Clone)]
 #[command(version, about, long_about = None)]
 pub struct AppConfiguration {
     #[arg(env, long)]
