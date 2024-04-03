@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use axum::{extract::State, response::Result};
+use axum::{extract::State, http::HeaderMap, response::Result};
 
 use serde_json::{json, Value};
 use tokio::sync::Mutex;
@@ -12,9 +12,14 @@ use crate::{
 
 use axum::{extract::Path, http::StatusCode, Json};
 
+use axum::extract::ConnectInfo;
+use std::net::SocketAddr;
+
 /// POST /poll/:id/vote
 /// Vote on a poll
 pub async fn vote_poll(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
     Path(id): Path<String>,
     State(state): State<Arc<Mutex<AppState>>>,
     Json(body): Json<serde_json::Value>,
@@ -34,7 +39,14 @@ pub async fn vote_poll(
                 .get_mut((body.option - 1) as usize)
                 .ok_or(APIError::OptionNotFound)?;
 
-            let voter = Voter::new("localhost".to_string(), id.clone(), body.option);
+            let ip = if let Some(ip) = headers.get("X-Forwarded-For") {
+                ip.to_str().unwrap_or(&addr.to_string()).to_string()
+            } else {
+                addr.to_string()
+            };
+
+            tracing::info!(ip, "Voting on poll");
+            let voter = Voter::new(ip, id.clone(), body.option);
             let voted = option.vote(&voter);
 
             Ok((StatusCode::OK, Json(json!({"voted": voted}))))

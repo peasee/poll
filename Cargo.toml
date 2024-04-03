@@ -6,7 +6,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.81"
-axum = { version = "0.7.5", features = ["macros"] }
+axum = { version = "0.7.5", features = ["macros", "tokio"] }
 clap = { version = "4.5.4", features = ["derive", "env"] }
 nanoid = "0.4.0"
 reqwest = { version = "0.12.2", features = ["json"] }

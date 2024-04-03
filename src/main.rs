@@ -3,8 +3,8 @@ use axum::routing::post;
 use clap::Parser;
 use tokio::sync::Mutex;
 
-use std::collections::BTreeMap;
 use std::sync::Arc;
+use std::{collections::BTreeMap, net::SocketAddr};
 use tracing::{info, Level};
 use tracing_subscriber::FmtSubscriber;
 
@@ -54,7 +54,11 @@ async fn main() -> Result<()> {
 
     let listener = tokio::net::TcpListener::bind(bind_string.clone()).await?;
     info!("Poll API listening on http://{}", bind_string);
-    axum::serve(listener, app).await?;
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await?;
 
     Ok(())
 }
