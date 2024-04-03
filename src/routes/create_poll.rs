@@ -10,12 +10,11 @@ use crate::{
     models::{AppState, NewPollBody, Poll},
 };
 
-use axum::debug_handler;
+
 use axum::{http::StatusCode, Json};
 
 /// POST /poll
 /// Create a new poll
-#[debug_handler]
 pub async fn create_poll(
     State(state): State<Arc<Mutex<AppState>>>,
     Json(body): Json<serde_json::Value>, // it sucks that we can't just do: Json<NewPollBody>,
