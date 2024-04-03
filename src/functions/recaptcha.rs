@@ -17,13 +17,13 @@ async fn verify_recaptcha(
     recaptcha_token: &str,
     originating_route: &str,
 ) -> anyhow::Result<bool> {
-    let secret_key = config.recaptcha_secret_key.clone().unwrap_or(String::new());
+    let secret_key = config.recaptcha_secret_key.clone().unwrap_or_default();
     let client = reqwest::Client::new();
     let res = client.post(format!("https://www.google.com/recaptcha/api/siteverify?secret={secret_key}&response={recaptcha_token}"))
         .send()
         .await?.json::<RecaptchaResponse>().await?;
 
-    let valid = res.success == true
+    let valid = res.success
         && res.hostname == config.host
         && res.action == originating_route
         && res.score >= 0.5;
