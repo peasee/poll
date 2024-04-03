@@ -41,11 +41,10 @@ The config file needs to be formatted like the following example:
 
 ```
 {
-    "threads": 2,
     "port": 8081,
     "host": "e.g. localhost",
-    "clientAPI": "full web URI path for the public API, e.g. https://domain.com",
-    "recapSecretKey": "your recaptcha secret key",
-    "recapSiteKey": "your recaptcha site key"
+    "api_host": "full web URI path for the public API, e.g. https://domain.com",
+    "recaptcha_secret_key": "your recaptcha secret key",
+    "recaptcha_site_key": "your recaptcha site key"
 }
 ```

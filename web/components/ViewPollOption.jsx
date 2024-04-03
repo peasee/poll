@@ -13,10 +13,10 @@ export function ViewPollOption(props) {
     async function vote(e) {
         e.preventDefault();
 
-        const recap = await request.captcha("vote");
-        const voteResult = await request.post(`/poll/${props.pollID}/vote`, {option: props.optionID, recap});
+        const recaptcha_token = await request.captcha("vote");
+        const voteResult = await request.post(`/poll/${props.pollID}/vote`, { option: props.optionID, recaptcha_token });
 
-        if(voteResult.error) {
+        if (voteResult.error) {
             props.showError(voteResult.error);
             console.error(voteResult.error);
             return;
@@ -26,7 +26,7 @@ export function ViewPollOption(props) {
     }
 
     function displayVoteButton() {
-        if(props.hasVoted == false) {
+        if (props.hasVoted == false) {
             return <Button variant="info" className="btn-sm pb-0 pt-0 ps-3 pe-3" onClick={vote}>Vote</Button>;
         }
 
@@ -40,9 +40,9 @@ export function ViewPollOption(props) {
                 <span className="small d-inline-block">{props.option.count} - {ratio}%</span>
                 {displayVoteButton()}
             </div>
-            <ProgressBar style={{height: "30px"}}>
-                <ProgressBar style={{backgroundColor: props.option.color}} now={ratio} max={100}></ProgressBar>
+            <ProgressBar style={{ height: "30px" }}>
+                <ProgressBar style={{ backgroundColor: props.option.color }} now={ratio} max={100}></ProgressBar>
             </ProgressBar>
         </Col>
-    )
+    );
 }
