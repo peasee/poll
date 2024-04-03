@@ -7,10 +7,11 @@ use serde_json::{json, Value};
 use axum::{http::StatusCode, Json};
 use std::collections::BTreeMap;
 
-use super::{Poll, PollOption};
+use super::{AppConfiguration, Poll, PollOption};
 
 pub struct AppState {
     pub polls: BTreeMap<String, Poll>,
+    pub config: AppConfiguration,
 }
 
 pub enum APIError {
@@ -67,6 +68,7 @@ pub struct NewPollBody {
     pub title: String,
     pub description: Option<String>,
     pub options: Vec<String>,
+    pub recaptcha_token: Option<String>,
 }
 
 impl TryFrom<serde_json::Value> for NewPollBody {
@@ -90,10 +92,16 @@ impl TryFrom<serde_json::Value> for NewPollBody {
             })
             .ok_or(APIError::InvalidRequest)?;
 
+        let recaptcha_token = value
+            .get("recaptcha_token")
+            .and_then(Value::as_str)
+            .map_or(None, |f| Some(f.to_string()));
+
         Ok(NewPollBody {
             title: title.to_string(),
             description: None,
             options,
+            recaptcha_token,
         })
     }
 }
@@ -112,6 +120,7 @@ impl From<NewPollBody> for Poll {
 
 pub struct PollVoteBody {
     pub option: u64,
+    pub recaptcha_token: Option<String>,
 }
 
 impl TryFrom<serde_json::Value> for PollVoteBody {
@@ -124,6 +133,14 @@ impl TryFrom<serde_json::Value> for PollVoteBody {
             .map(u64::from)
             .ok_or(APIError::InvalidRequest)?;
 
-        Ok(PollVoteBody { option })
+        let recaptcha_token = value
+            .get("recaptcha_token")
+            .and_then(Value::as_str)
+            .map_or(None, |f| Some(f.to_string()));
+
+        Ok(PollVoteBody {
+            option,
+            recaptcha_token,
+        })
     }
 }

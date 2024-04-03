@@ -1,7 +1,7 @@
 "use strict";
 
-const config = require("./config.json");
 const webpack = require("webpack");
+require('dotenv').config({ path: __dirname + '/.env' });
 
 module.exports = {
   entry: './web/index.jsx',
@@ -35,8 +35,8 @@ module.exports = {
   devtool: "inline-source-map",
   plugins: [
     new webpack.DefinePlugin({
-      "API_HOST": `"${config.clientAPI}"`,
-      "RECAP_SITE_KEY": `"${config.recapSiteKey}"`
+      "API_HOST": `"${process.env.API_HOST}"`,
+      "RECAP_SITE_KEY": `"${process.env.RECAPTCHA_SITE_KEY ?? ''}"`
     })
   ]
 };

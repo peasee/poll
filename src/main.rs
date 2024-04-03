@@ -1,5 +1,6 @@
 use anyhow::Result;
 use axum::routing::post;
+use clap::Parser;
 
 use std::collections::BTreeMap;
 use std::sync::{Arc, RwLock};
@@ -9,7 +10,6 @@ use tracing_subscriber::FmtSubscriber;
 use axum::{routing::get, Router};
 
 use poll::models::AppState;
-use poll::routes::alive::{alive, alive_with_error, alive_with_name, alive_with_state};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -22,29 +22,31 @@ async fn main() -> Result<()> {
 
     tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
 
-    info!("Hello, world!");
+    info!("Poll API starting up...");
+
+    let config = poll::models::AppConfiguration::parse();
+    let bind_string = format!("{}:{}", config.host, config.port);
 
     let shared_state = Arc::new(RwLock::new(AppState {
         polls: BTreeMap::new(),
+        config,
     }));
 
-    // build our application with a route
+    // build our application with routes
     let app = Router::new()
-        .route("/alive", get(alive))
-        .route("/alive/with_state", get(alive_with_state))
-        .route("/alive/with_error", get(alive_with_error))
-        .route("/alive/:name", get(alive_with_name))
-        .route("/poll/:id", get(poll::routes::polls::get_poll))
+        .route("/api/poll/:id", get(poll::routes::polls::get_poll))
         .route(
-            "/poll/:id/options",
+            "/api/poll/:id/options",
             get(poll::routes::polls::get_poll_options),
         )
-        .route("/poll", post(poll::routes::polls::create_poll))
-        .route("/poll/:id/vote", post(poll::routes::polls::vote_poll))
+        .route("/api/poll", post(poll::routes::polls::create_poll))
+        .route("/api/poll/:id/vote", post(poll::routes::polls::vote_poll))
         .with_state(shared_state);
 
     // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3081").await?;
+
+    let listener = tokio::net::TcpListener::bind(bind_string.clone()).await?;
+    info!("Poll API listening on http://{}", bind_string);
     axum::serve(listener, app).await?;
 
     Ok(())

@@ -9,3 +9,6 @@ pub use state::*;
 
 mod view;
 pub use view::*;
+
+mod config;
+pub use config::*;

@@ -21,13 +21,13 @@ export function CreatePollForm(props) {
     }
 
     function addOrUpdateOption(index, e) {
-        if(e.target.value == "" || e.target.value.length == 0) {
+        if (e.target.value == "" || e.target.value.length == 0) {
             options.splice(index, 1);
         } else {
             options[index] = e.target.value;
         }
 
-        if(options[options.length - 1] !== "") {
+        if (options[options.length - 1] !== "") {
             options.push("");
         }
 
@@ -37,12 +37,12 @@ export function CreatePollForm(props) {
     function renderPollOptions() {
         const displayOptions = [];
 
-        for(let i=0; i<options.length; i++) {
+        for (let i = 0; i < options.length; i++) {
             displayOptions.push((
                 <Form.Group key={i} as={Row} className="mb-3" controlId="formPollOption1">
-                    <Form.Label column sm={2}>Option #{i+1}</Form.Label>
+                    <Form.Label column sm={2}>Option #{i + 1}</Form.Label>
                     <Col sm={10}>
-                        <Form.Control type="text" placeholder={`Enter poll option #${i+1}`} value={options[i]} onChange={e=>addOrUpdateOption(i, e)} />
+                        <Form.Control type="text" placeholder={`Enter poll option #${i + 1}`} value={options[i]} onChange={e => addOrUpdateOption(i, e)} />
                     </Col>
                 </Form.Group>
             ));
@@ -54,18 +54,18 @@ export function CreatePollForm(props) {
     async function createPoll(e) {
         e.preventDefault();
 
-        const recap = await request.captcha("create");
-        const body = {title, options, recap};
-        body.options = body.options.filter(o=>o!=="");
+        const recaptcha_token = await request.captcha("create");
+        const body = { title, options, recaptcha_token };
+        body.options = body.options.filter(o => o !== "");
 
         const newPoll = await request.post("/poll", body);
 
-        if(newPoll.error) {
+        if (newPoll.error) {
             props.showError(newPoll.error);
             console.error(newPoll.error);
             return;
         }
-        
+
         // redirect to the new poll to view it
         return navigate(`/poll/${newPoll.id}`);
     }
@@ -83,12 +83,12 @@ export function CreatePollForm(props) {
                     </Form.Group>
 
                     {renderPollOptions()}
-                    
+
                     <Button variant="warning" type="submit">
                         Create new poll
                     </Button>
                 </Form>
             </Col>
         </Row>
-    )
+    );
 }
