@@ -2,6 +2,8 @@
 
 An open source, high performance, polling platform - built in Rust.
 
+Project name suggested by [@farooqkz](https://github.com/farooqkz) - "Rust + Poll" :heart:
+
 # Table of Contents
 1. [Performance](#performance)
 2. [V2 Backend](#backend)
