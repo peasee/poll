@@ -1,5 +1,6 @@
-# poll
-An open source, high performance, polling platform
+# roll
+
+An open source, high performance, polling platform - built in Rust.
 
 # Table of Contents
 1. [Performance](#performance)
